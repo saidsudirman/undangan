@@ -58,6 +58,45 @@ export const guest = (() => {
     };
 
     /**
+     * Fungsi untuk mendapatkan nama tamu dari URL parameter
+     * @returns {string}
+     */
+    const getGuestNameFromURL = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('to') || urlParams.get('guest') || '';
+    };
+
+    /**
+     * Fungsi untuk menampilkan nama tamu
+     * @param {string} guestName 
+     * @returns {void}
+     */
+    const displayGuestName = (guestName) => {
+        if (guestName && guestName.trim() !== '') {
+            const guestNameElement = document.getElementById('guest-name');
+            if (guestNameElement) {
+                // Hapus placeholder jika ada
+                const placeholder = guestNameElement.querySelector('.guest-placeholder');
+                if (placeholder) {
+                    placeholder.style.display = 'none';
+                }
+                
+                // Tampilkan nama tamu
+                const actualName = guestNameElement.querySelector('.actual-guest-name') || 
+                                  document.createElement('div');
+                if (!guestNameElement.querySelector('.actual-guest-name')) {
+                    actualName.classList.add('actual-guest-name', 'font-esthetic', 'mb-3');
+                    actualName.style.cssText = 'color: #333; font-weight: 500; font-size: 1.5rem;';
+                    guestNameElement.appendChild(actualName);
+                }
+                
+                actualName.textContent = `Kepada Yth. ${guestName}`;
+                actualName.style.display = 'block';
+            }
+        }
+    };
+
+    /**
      * @returns {void}
      */
     const showGuestName = () => {
@@ -72,15 +111,12 @@ export const guest = (() => {
             name = window.decodeURIComponent(raw[1]);
         }
 
-        if (name) {
-            const guestName = document.getElementById('guest-name');
-            const div = document.createElement('div');
-            div.classList.add('m-2');
-
-            const template = `<small class="mt-0 mb-1 mx-0 p-0">${util.escapeHtml(guestName?.getAttribute('data-message'))}</small><p class="m-0 p-0" style="font-size: 1.25rem">${util.escapeHtml(name)}</p>`;
-            util.safeInnerHTML(div, template);
-
-            guestName?.appendChild(div);
+        // Panggil fungsi baru untuk menampilkan nama tamu
+        const guestNameFromURL = getGuestNameFromURL();
+        if (guestNameFromURL) {
+            displayGuestName(guestNameFromURL);
+        } else if (name) {
+            displayGuestName(name);
         }
 
         const form = document.getElementById('form-name');
@@ -414,6 +450,8 @@ export const guest = (() => {
                 modal,
                 showStory,
                 closeInformation,
+                displayGuestName, // Export fungsi baru
+                getGuestNameFromURL, // Export fungsi baru
             },
         };
     };
