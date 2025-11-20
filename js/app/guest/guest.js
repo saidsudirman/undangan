@@ -90,7 +90,7 @@ export const guest = (() => {
                     guestNameElement.appendChild(actualName);
                 }
                 
-                actualName.textContent = `Kepada Yth. ${guestName}`;
+                actualName.textContent = ` ${guestName}`;
                 actualName.style.display = 'block';
             }
         }
